@@ -13,3 +13,7 @@ app:
 
 book-cover-api:
   url: "http://bookcover.longitood.com/bookcover"
+
+spring:
+  flyway:
+    enabled=true
