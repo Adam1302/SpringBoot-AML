@@ -30,7 +30,7 @@ If everything is setup already:
 ### Setup Instructions
 Set up or re-run docker container:
 - If you've never created the container on your machine:
-        - use statement: **docker run --name postgres-spring -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres:alpine**
+        - use statement: **docker run --name postgres-spring -e POSTGRES_PASSWORD=[yourPassword] -d -p 5432:5432 postgres:alpine**
 - Prepare the port using command: **docker port postgres-spring**
 - To list exited containers: **docker ps -a**
 - Using the id of the desired container, you can start it: **docker start ---container_id---**
@@ -43,7 +43,14 @@ Setup and modify database within Postgres (with UUID support):
 - **CREATE EXTENSION "uuid-ossp";**
 - **CREATE EXTENSION citext;**
 - **SELECT uuid_generate_v4();**
-- (to add columns) **ALTER TABLE ---table-name--- ---alteration--- ---column-name--- ---data-type---;**
+
+Within this project:
+- Add a file in the project root called "flyway.conf" with information in the following format:
+    flyway.user=postgres
+    flyway.password=[yourPassword]
+    flyway.schemas=public
+    flyway.url=jdbc:postgresql://localhost:5432/demodb
+    flyway.locations=filesystem:db/migration
 
 Within Postgres (with db already setup):
 - To list existing databases: **\l**
