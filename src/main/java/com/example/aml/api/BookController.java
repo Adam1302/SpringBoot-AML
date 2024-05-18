@@ -35,9 +35,12 @@ public class BookController {
     }
 
     @PostMapping // tells Spring this is a POST request (as opposed to get/put/etc.)
-    public void addBook(@RequestBody BookDTO book) {
+    public ResponseEntity<Integer> addBook(@RequestBody BookDTO book) {
         // @RequestBody takes the body of the api request and instantiates a Book based off of it
-        bookService.addBook(book);
+        return new ResponseEntity<>(
+                bookService.addBook(book),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping(path = "{id}") // Basically, we add the path (in this case, the ID) to the link
@@ -72,25 +75,34 @@ public class BookController {
     }
 
     @DeleteMapping(path = "{id}")
-    public int deleteBookById(@PathVariable("id") UUID id) {
-        return bookService.deleteBookById(id);
+    public ResponseEntity<Integer> deleteBookById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(
+                bookService.deleteBookById(id),
+                HttpStatus.OK
+        );
     }
 
     @PutMapping(path = "{id}")
-    public int updateBookById(@PathVariable("id") UUID id,
+    public ResponseEntity<Integer> updateBookById(@PathVariable("id") UUID id,
                               @NotNull @Valid @RequestBody BookDTO book) {
-        return bookService.updateBookById(id, book);
+        return new ResponseEntity<>(
+                bookService.updateBookById(id, book),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping(path = "image/{id}")
-    public AssociatedImage getImage(@PathVariable("id") UUID id) {
-        return bookService.getImageForBook(id);
+    public ResponseEntity<AssociatedImage> getImage(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(bookService.getImageForBook(id), HttpStatus.OK);
     }
 
     @PutMapping(path = "image/{id}")
-    public int insertImageForBook(
+    public ResponseEntity<Integer> insertImageForBook(
             @PathVariable("id") UUID id,
             @Valid @RequestBody AssociatedImage image) {
-        return bookService.insertImageForBook(id, image.getPicture());
+        return new ResponseEntity<>(
+                bookService.insertImageForBook(id, image.getPicture()),
+                HttpStatus.OK
+        );
     }
 }
