@@ -6,6 +6,8 @@ import com.example.aml.service.BookService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,21 +42,33 @@ public class BookController {
 
     @GetMapping(path = "{id}") // Basically, we add the path (in this case, the ID) to the link
     // ex. localhost:8080/api/v1/book/83e0eb8e-7c42-42a8-a7ab-d179a4b1cf24
-    public BookDTO selectBookById(@PathVariable("id") UUID id) {
-        return bookService.selectBookById(id)
+    public ResponseEntity<BookDTO> selectBookById(@PathVariable("id") UUID id) {
+        BookDTO bookDTO =
+                bookService.selectBookById(id)
                 .orElse(null);
+        if (bookDTO == null) {
+            return new ResponseEntity<>(bookDTO, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(bookDTO, HttpStatus.OK);
     }
 
     @GetMapping(path = "byNameAndAuthor") // Basically, we add the path (in this case, the ID) to the link
-    public BookDTO selectBookByNameAndAuthor(@RequestParam Map<String, String> params) {
-        return bookService.selectBookByNameAndAuthor(params)
-                .orElse(null);
+    public ResponseEntity<BookDTO> selectBookByNameAndAuthor(@RequestParam Map<String, String> params) {
+        BookDTO bookDTO =
+                bookService.selectBookByNameAndAuthor(params)
+                        .orElse(null);
+        if (bookDTO == null) {
+            return new ResponseEntity<>(bookDTO, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(bookDTO, HttpStatus.OK);
     }
 
     // Remove the "path = filter" once this works and you remove the other endpoint
     @GetMapping
-    public List<BookDTO> getBooks(@RequestParam Map<String, String> params) {
-        return bookService.getBooks(params);
+    public ResponseEntity<List<BookDTO>> getBooks(@RequestParam Map<String, String> params) {
+        return new ResponseEntity<>(bookService.getBooks(params), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{id}")

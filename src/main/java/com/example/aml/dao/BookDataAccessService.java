@@ -4,6 +4,7 @@ import com.example.aml.model.AssociatedImage;
 import com.example.aml.model.Book;
 import com.example.aml.utility.BookConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -203,31 +204,40 @@ public class BookDataAccessService implements BookDao {
 
     @Override
     public Optional<Book> selectBookById(UUID id) {
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(
-                        """
-                        SELECT
-                            id,
-                            work_title,
-                            primary_author,
-                            year_published,
-                            word_count,
-                            picture_id,
-                            created_at,
-                            updated_at,
-                            genres
-                        FROM book
-                        WHERE id = ?
-                        """,
-                        bookRowMapper,
-                        id));
+        Book book = null;
+        try {
+            book = jdbcTemplate.queryForObject(
+                    """
+                            SELECT
+                                id,
+                                work_title,
+                                primary_author,
+                                year_published,
+                                word_count,
+                                picture_id,
+                                created_at,
+                                updated_at,
+                                genres
+                            FROM book
+                            WHERE id = ?
+                            """,
+                    bookRowMapper,
+                    id);
+        } catch (EmptyResultDataAccessException e) {
+            Logger.getAnonymousLogger().log(
+                    Level.INFO,
+                    String.format("Book with id %s not found", id.toString()));
+        }
+
+        return Optional.ofNullable(book);
     }
 
     @Override
     public Optional<Book> selectBookByNameAndAuthor(String workTitle, String primaryAuthor) {
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(
-                        String.format("""
+        Book book = null;
+        try {
+            book = jdbcTemplate.queryForObject(
+                    String.format("""
                         SELECT
                             id,
                             work_title,
@@ -241,7 +251,16 @@ public class BookDataAccessService implements BookDao {
                         FROM book
                         WHERE work_title = '%s' AND primary_author = '%s'
                         """, workTitle, primaryAuthor),
-                        bookRowMapper));
+                    bookRowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            Logger.getAnonymousLogger().log(
+                    Level.INFO,
+                    String.format(
+                            "Book '%s' by '%s' not found",
+                            workTitle, primaryAuthor));
+        }
+
+        return Optional.ofNullable(book);
     }
 
     @Override
