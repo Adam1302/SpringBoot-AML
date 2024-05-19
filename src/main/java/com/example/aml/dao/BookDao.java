@@ -28,4 +28,8 @@ public interface BookDao {
     AssociatedImage getImageForBook(UUID id);
 
     Optional<Book> selectBookByNameAndAuthor(String workTitle, String primaryAuthor);
+
+    int updateColumnValue(UUID id, String columnName, String newValue);
+
+    int updateColumnValue(UUID id, String columnName, Integer newValue);
 }

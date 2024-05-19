@@ -65,6 +65,16 @@ public class MockBookDataAccessService implements BookDao {
     }
 
     @Override
+    public int updateColumnValue(UUID id, String columnName, String newValue) {
+        return 0; // not implemented here
+    }
+
+    @Override
+    public int updateColumnValue(UUID id, String columnName, Integer newValue) {
+        return 0; // not implemented here
+    }
+
+    @Override
     public Optional<Book> selectBookById(UUID id) {
         return bookDB.stream().filter(
                         book -> book.getId().equals(id))

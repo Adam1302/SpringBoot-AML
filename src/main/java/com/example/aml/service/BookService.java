@@ -111,6 +111,14 @@ public class BookService {
                 ));
     }
 
+    public int updateColumnValue(UUID id, String columnName, String newValue) {
+        return bookDao.updateColumnValue(id, columnName, newValue);
+    }
+
+    public int updateColumnValue(UUID id, String columnName, Integer newValue) {
+        return bookDao.updateColumnValue(id, columnName, newValue);
+    }
+
     public int insertImageForBook(UUID id, byte[] imageAsByteArray) {
         return bookDao.insertImage(id, imageAsByteArray);
     }

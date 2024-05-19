@@ -203,6 +203,34 @@ public class BookDataAccessService implements BookDao {
     }
 
     @Override
+    public int updateColumnValue(UUID id, String columnName, String newValue) {
+        var statement = String.format(
+                """
+                UPDATE book
+                SET
+                    %s = '%s'
+                WHERE id = '%s'
+                        """,
+                columnName, newValue, id.toString()
+        );
+        return jdbcTemplate.update(statement);
+    }
+
+    @Override
+    public int updateColumnValue(UUID id, String columnName, Integer newValue) {
+        var statement = String.format(
+                """
+                UPDATE book
+                SET
+                    %s = %d
+                WHERE id = '%s'
+                        """,
+                columnName, newValue, id.toString()
+        );
+        return jdbcTemplate.update(statement);
+    }
+
+    @Override
     public Optional<Book> selectBookById(UUID id) {
         Book book = null;
         try {

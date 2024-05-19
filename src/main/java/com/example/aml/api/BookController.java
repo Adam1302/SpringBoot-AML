@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
@@ -74,26 +76,17 @@ public class BookController {
         return new ResponseEntity<>(bookService.getBooks(params), HttpStatus.OK);
     }
 
+    @GetMapping(path = "image/{id}")
+    public ResponseEntity<AssociatedImage> getImage(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(bookService.getImageForBook(id), HttpStatus.OK);
+    }
+
     @DeleteMapping(path = "{id}")
     public ResponseEntity<Integer> deleteBookById(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(
                 bookService.deleteBookById(id),
                 HttpStatus.OK
         );
-    }
-
-    @PutMapping(path = "{id}")
-    public ResponseEntity<Integer> updateBookById(@PathVariable("id") UUID id,
-                              @NotNull @Valid @RequestBody BookDTO book) {
-        return new ResponseEntity<>(
-                bookService.updateBookById(id, book),
-                HttpStatus.OK
-        );
-    }
-
-    @GetMapping(path = "image/{id}")
-    public ResponseEntity<AssociatedImage> getImage(@PathVariable("id") UUID id) {
-        return new ResponseEntity<>(bookService.getImageForBook(id), HttpStatus.OK);
     }
 
     @PutMapping(path = "image/{id}")
@@ -104,5 +97,35 @@ public class BookController {
                 bookService.insertImageForBook(id, image.getPicture()),
                 HttpStatus.OK
         );
+    }
+
+    @PutMapping(path = "{id}")
+    public ResponseEntity<Integer> updateBookById(
+            @PathVariable("id") UUID id,
+            @NotNull @Valid @RequestBody BookDTO book) {
+        return new ResponseEntity<>(
+                bookService.updateBookById(id, book),
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping(path = "change_field/{id}")
+    public ResponseEntity<Integer> updateStringFieldInBook(
+            @PathVariable("id") UUID id,
+            @RequestParam Map<String, String> params) {
+        int updateResult;
+        if (Objects.equals(params.get("field_type"), "STRING")) {
+            updateResult = bookService.updateColumnValue(
+                    id, params.get("column_name"), params.get("new_value"));
+        } else {
+            updateResult = bookService.updateColumnValue(
+                    id, params.get("column_name"), Integer.parseInt(params.get("new_value")));
+        }
+
+        if (updateResult == 0) {
+            return new ResponseEntity<>(updateResult, HttpStatus.NOT_MODIFIED);
+        }
+
+        return new ResponseEntity<>(updateResult, HttpStatus.OK);
     }
 }
