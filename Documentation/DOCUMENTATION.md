@@ -9,7 +9,7 @@
 
 ### API Layer
 http://localhost:8080/swagger-ui/index.html
-
-
-
+- For more info:
+  - https://springdoc.org/#Introduction
+  - https://www.baeldung.com/spring-rest-openapi-documentation
 
