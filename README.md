@@ -7,7 +7,7 @@
 
 README.md Directories
 - For setup: [Documentation/SETUP.md](Documentation/SETUP.md)
-- For setup: [here](Documentation/SETUP.md)
+- For API reference: (with backend running) http://localhost:8080/swagger-ui/index.html
 
 
 

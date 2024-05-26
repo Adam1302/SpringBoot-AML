@@ -7,5 +7,9 @@
   - We can view the evolution of our schema in src/main/resources/db/migration
     - If you want to make a change to the schema, you'll need to add a file to this folder defining the changes you're making
 
+### API Layer
+http://localhost:8080/swagger-ui/index.html
+
+
 
 
