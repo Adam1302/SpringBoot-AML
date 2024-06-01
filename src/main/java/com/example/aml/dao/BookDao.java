@@ -32,4 +32,6 @@ public interface BookDao {
     int updateColumnValue(UUID id, String columnName, String newValue);
 
     int updateColumnValue(UUID id, String columnName, Integer newValue);
+
+    List<Book> selectBooksByTitleAndAuthorSearch(Optional<String> primaryAuthor, Optional<String> workTitle);
 }
