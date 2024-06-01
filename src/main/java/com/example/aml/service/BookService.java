@@ -91,6 +91,13 @@ public class BookService {
                 .stream().map(bookDTOMapper).toList();
     }
 
+    public List<BookDTO> getBooksBySearch(Map<String, String> params) {
+        return bookDao.selectBooksByTitleAndAuthorSearch(
+                Optional.ofNullable(params.get("primary_author")),
+                Optional.ofNullable(params.get("work_title")))
+                .stream().map(bookDTOMapper).toList();
+    }
+
     public int deleteBookById(UUID id) {
         return bookDao.deleteBookById(id);
     }

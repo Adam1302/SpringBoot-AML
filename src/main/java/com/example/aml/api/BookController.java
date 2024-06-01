@@ -70,10 +70,14 @@ public class BookController {
         return new ResponseEntity<>(bookDTO, HttpStatus.OK);
     }
 
-    // Remove the "path = filter" once this works and you remove the other endpoint
     @GetMapping
     public ResponseEntity<List<BookDTO>> getBooks(@RequestParam Map<String, String> params) {
         return new ResponseEntity<>(bookService.getBooks(params), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "search")
+    public ResponseEntity<List<BookDTO>> getBooksBySearch(@RequestParam Map<String, String> params) {
+        return new ResponseEntity<>(bookService.getBooksBySearch(params), HttpStatus.OK);
     }
 
     @GetMapping(path = "image/{id}")

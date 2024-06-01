@@ -316,6 +316,44 @@ public class BookDataAccessService implements BookDao {
                 bookRowMapper);
     }
 
+    @Override
+    public List<Book> selectBooksByTitleAndAuthorSearch(
+            Optional<String> primaryAuthor, Optional<String> workTitle) {
+        String authorAndTitleSpecs;
+        if (primaryAuthor.isPresent()) {
+            authorAndTitleSpecs = String.format(
+                    " WHERE LOWER(b.primary_author) LIKE LOWER(CONCAT('%%', '%s', '%%')) ",
+                    primaryAuthor.get());
+            if (workTitle.isPresent()) {
+                authorAndTitleSpecs += String.format(
+                        " AND LOWER(b.work_title) LIKE LOWER(CONCAT('%%', '%s', '%%')) ",
+                        workTitle.get());
+            }
+        } else if (workTitle.isPresent()) {
+            authorAndTitleSpecs = String.format(
+                    " WHERE LOWER(b.work_title) LIKE LOWER(CONCAT('%%', '%s', '%%')) ",
+                    workTitle.get());
+        } else {
+            return selectBooks(new ArrayList<>(), new ArrayList<>());
+        }
+        return jdbcTemplate.query(
+                String.format("""
+                        SELECT
+                            id,
+                            work_title,
+                            primary_author,
+                            year_published,
+                            word_count,
+                            picture_id,
+                            created_at,
+                            updated_at,
+                            genres
+                        FROM book b
+                        %s;
+                        """, authorAndTitleSpecs),
+                bookRowMapper);
+    }
+
     private static String getWhereFiltersFromArray(ArrayList<String> bookQueryFilters) {
         StringBuilder bookQueryFiltersAsString = new StringBuilder();
 
