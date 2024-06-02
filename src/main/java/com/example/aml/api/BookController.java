@@ -75,11 +75,6 @@ public class BookController {
         return new ResponseEntity<>(bookService.getBooks(params), HttpStatus.OK);
     }
 
-    @GetMapping(path = "search")
-    public ResponseEntity<List<BookDTO>> getBooksBySearch(@RequestParam Map<String, String> params) {
-        return new ResponseEntity<>(bookService.getBooksBySearch(params), HttpStatus.OK);
-    }
-
     @GetMapping(path = "image/{id}")
     public ResponseEntity<AssociatedImage> getImage(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(bookService.getImageForBook(id), HttpStatus.OK);
