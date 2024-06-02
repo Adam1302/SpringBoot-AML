@@ -90,12 +90,6 @@ public class MockBookDataAccessService implements BookDao {
     }
 
     @Override
-    public List<Book> selectBooksByTitleAndAuthorSearch(
-            Optional<String> primaryAuthor, Optional<String> workTitle) {
-        return List.of();
-    }
-
-    @Override
     public AssociatedImage getImageForBook(UUID id) {
         return null;
     }
