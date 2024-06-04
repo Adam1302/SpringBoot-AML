@@ -38,17 +38,20 @@ public class BookService {
     }
 
     public int addBook(BookDTO bookDTO) {
+        String workTitle = prepareString(bookDTO.getWorkTitle());
+        String primaryAuthor = prepareString(bookDTO.getPrimaryAuthor());
+
         Optional<BookDTO> bookIfExists =
                 selectBookByNameAndAuthor(
-                        Map.of(BOOK_FIELD_WORK_TITLE, bookDTO.getWorkTitle(),
-                                BOOK_FIELD_PRIMARY_AUTHOR, bookDTO.getPrimaryAuthor()));
+                        Map.of(BOOK_FIELD_WORK_TITLE, workTitle,
+                                BOOK_FIELD_PRIMARY_AUTHOR, primaryAuthor));
         if (bookIfExists.isPresent()) return 0;
 
         UUID id = UUID.randomUUID();
         Book book = new Book(
                 id,
-                bookDTO.getWorkTitle(),
-                bookDTO.getPrimaryAuthor(),
+                workTitle,
+                primaryAuthor,
                 bookDTO.getYearPublished(),
                 bookDTO.getWordCount(),
                 null,
@@ -60,8 +63,8 @@ public class BookService {
 
         new Thread(() -> {
             Optional<byte[]> bookCoverArray = bookCoverService.getBookCoverURL(
-                    book.getWorkTitle(),
-                    book.getPrimaryAuthor());
+                    workTitle,
+                    primaryAuthor);
 
             Logger.getAnonymousLogger().log(Level.INFO, String.valueOf(bookCoverArray));
 
@@ -77,8 +80,8 @@ public class BookService {
 
     public Optional<BookDTO> selectBookByNameAndAuthor(Map<String, String> params) {
         return bookDao.selectBookByNameAndAuthor(
-                params.get(BOOK_FIELD_WORK_TITLE),
-                params.get(BOOK_FIELD_PRIMARY_AUTHOR)
+                prepareString(params.get(BOOK_FIELD_WORK_TITLE)),
+                prepareString(params.get(BOOK_FIELD_PRIMARY_AUTHOR))
         ).map(bookDTOMapper);
     }
 
@@ -109,8 +112,8 @@ public class BookService {
                 id,
                 new Book(
                         id,
-                        bookDTO.getWorkTitle(),
-                        bookDTO.getPrimaryAuthor(),
+                        prepareString(bookDTO.getWorkTitle()),
+                        prepareString(bookDTO.getPrimaryAuthor()),
                         bookDTO.getYearPublished(),
                         bookDTO.getWordCount(),
                         null,
@@ -121,7 +124,7 @@ public class BookService {
     }
 
     public int updateColumnValue(UUID id, String columnName, String newValue) {
-        return bookDao.updateColumnValue(id, columnName, newValue);
+        return bookDao.updateColumnValue(id, columnName, prepareString(newValue));
     }
 
     public int updateColumnValue(UUID id, String columnName, Integer newValue) {
@@ -139,9 +142,9 @@ public class BookService {
     private static void addBookQueryStringFilters(
             Map<String, String> params, ArrayList<String> bookQueryFilters, String columnName) {
         if (params.containsKey(columnName)) {
-            String authorName = params.get(columnName);
-            if (!authorName.trim().equals("")) {
-                bookQueryFilters.add(String.format("strpos(%s::citext, '%s'::citext) > 0", columnName, authorName));
+            String columnValue = prepareString(params.get(columnName));
+            if (!columnValue.trim().equals("")) {
+                bookQueryFilters.add(String.format("strpos(%s::citext, '%s'::citext) > 0", columnName, columnValue));
             }
         }
     }
@@ -174,5 +177,9 @@ public class BookService {
                         String.format("ORDER BY %s %s", columnName, order));
             }
         }
+    }
+
+    private static String prepareString(String s) {
+        return s.replace('\'', '’');
     }
 }
