@@ -19,6 +19,9 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.example.aml.utility.BookConstants.BOOK_FIELD_PRIMARY_AUTHOR;
+import static com.example.aml.utility.BookConstants.BOOK_FIELD_WORK_TITLE;
+
 @Service
 public class BookService {
     private final BookDao bookDao;
@@ -35,6 +38,12 @@ public class BookService {
     }
 
     public int addBook(BookDTO bookDTO) {
+        Optional<BookDTO> bookIfExists =
+                selectBookByNameAndAuthor(
+                        Map.of(BOOK_FIELD_WORK_TITLE, bookDTO.getWorkTitle(),
+                                BOOK_FIELD_PRIMARY_AUTHOR, bookDTO.getPrimaryAuthor()));
+        if (bookIfExists.isPresent()) return 0;
+
         UUID id = UUID.randomUUID();
         Book book = new Book(
                 id,
@@ -68,8 +77,8 @@ public class BookService {
 
     public Optional<BookDTO> selectBookByNameAndAuthor(Map<String, String> params) {
         return bookDao.selectBookByNameAndAuthor(
-                params.get("work_title"),
-                params.get("primary_author")
+                params.get(BOOK_FIELD_WORK_TITLE),
+                params.get(BOOK_FIELD_PRIMARY_AUTHOR)
         ).map(bookDTOMapper);
     }
 
@@ -77,8 +86,8 @@ public class BookService {
         ArrayList<String> bookQueryWhereFilters = new ArrayList<>();
         ArrayList<String> bookQueryOtherFilters = new ArrayList<>();
 
-        addBookQueryStringFilters(params, bookQueryWhereFilters, "primary_author");
-        addBookQueryStringFilters(params, bookQueryWhereFilters, "work_title");
+        addBookQueryStringFilters(params, bookQueryWhereFilters, BOOK_FIELD_PRIMARY_AUTHOR);
+        addBookQueryStringFilters(params, bookQueryWhereFilters, BOOK_FIELD_WORK_TITLE);
 
         addBookQueryRangeFilters(params, "word_count", bookQueryWhereFilters, true);
         addBookQueryRangeFilters(params, "word_count", bookQueryWhereFilters, false);
