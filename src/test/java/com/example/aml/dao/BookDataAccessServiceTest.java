@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/** Unit tests for {@link BookDataAccessService} */
 @JdbcTest
 @Sql(
         scripts = {"testing-schema-setup.sql", "testing-data.sql"},

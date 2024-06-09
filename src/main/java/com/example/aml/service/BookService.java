@@ -158,7 +158,7 @@ public class BookService {
                 try {
                     Integer limit = Integer.parseInt(limitAsString);
                     bookQueryFilters.add(
-                            String.format("%s %s %d", columnName, (upper? " <= " : " >= "), limit));
+                            String.format("%s %s %d", columnName, (upper? "<=" : ">="), limit));
                 } catch (NumberFormatException err) {
                     Logger.getAnonymousLogger().log(
                             Level.INFO, err.getMessage());
