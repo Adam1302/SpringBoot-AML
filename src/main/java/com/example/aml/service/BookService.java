@@ -8,6 +8,7 @@ import com.example.aml.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -180,6 +181,6 @@ public class BookService {
     }
 
     private static String prepareString(String s) {
-        return s.replace('\'', '’');
+        return s == null ? "" : UriUtils.decode(s.replace('\'', '’'), "UTF-8");
     }
 }

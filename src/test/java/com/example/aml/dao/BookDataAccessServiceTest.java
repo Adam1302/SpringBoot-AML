@@ -10,11 +10,12 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE;
+import static com.example.aml.testUtils.BookTestConstants.SENSE_AND_SENSIBILITY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Unit tests for {@link BookDataAccessService} */
@@ -27,28 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class BookDataAccessServiceTest {
 
-    private static final Book PRIDE_AND_PREJUDICE = new Book(
-            UUID.fromString("b3467d11-18da-48e4-a761-af4cc2ef6761"),
-            "Pride and Prejudice",
-            "Jane Austen",
-            1813,
-            122189,
-            null,
-            new Date(1577854800000L),
-            new Date(1609477200000L),
-            null
-    );
-    private static final Book SENSE_AND_SENSIBILITY = new Book(
-            UUID.fromString("1f3acc9e-a96a-47db-aee1-93d8715b979e"),
-            "Sense and Sensibility",
-            "Jane Austen",
-            1811,
-            122646,
-            null,
-            new Date(1577854800000L),
-            new Date(1609477200000L),
-            null
-    );
     private final BookDataAccessService bookDao;
 
     @Autowired

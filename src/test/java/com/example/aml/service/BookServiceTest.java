@@ -12,12 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE;
+import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -32,25 +33,7 @@ import static org.mockito.Mockito.when;
 class BookServiceTest {
 
     private BookService bookService;
-    private static final Book PRIDE_AND_PREJUDICE = new Book(
-            UUID.fromString("b3467d11-18da-48e4-a761-af4cc2ef6761"),
-            "Pride and Prejudice",
-            "Jane Austen",
-            1813,
-            122189,
-            null,
-            new Date(1577854800000L),
-            new Date(1609477200000L),
-            null
-    );
-    private static final BookDTO PRIDE_AND_PREJUDICE_DTO = new BookDTO(
-            UUID.fromString("b3467d11-18da-48e4-a761-af4cc2ef6761"),
-            "Pride and Prejudice",
-            "Jane Austen",
-            1813,
-            122189,
-            null
-    );
+
 
     @Mock
     private BookDataAccessService bookDao;

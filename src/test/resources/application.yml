@@ -6,7 +6,7 @@
 # Connection Details for Database
 app:
   datasource:
-    jdbc-url: jdbc:h2://mem:db;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    jdbc-url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
     username: sa
     password: sa
     driverClassName: org.h2.Driver

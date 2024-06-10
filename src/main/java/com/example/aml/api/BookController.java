@@ -52,7 +52,7 @@ public class BookController {
                 bookService.selectBookById(id)
                 .orElse(null);
         if (bookDTO == null) {
-            return new ResponseEntity<>(bookDTO, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(bookDTO, HttpStatus.OK);
