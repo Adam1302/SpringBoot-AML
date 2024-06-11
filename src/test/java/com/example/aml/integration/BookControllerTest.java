@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         scripts = {"/com/example/aml/dao/testing-schema-cleanup.sql"},
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class BookControllerIntegrationTest {
+class BookControllerTest {
     @LocalServerPort
     private int localServerPort;
 
@@ -112,8 +112,8 @@ class BookControllerIntegrationTest {
                 "primary_author", PRIDE_AND_PREJUDICE_DTO.getPrimaryAuthor());
 
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(baseUrl + "/byNameAndAuthor")
-                .queryParam("work_title", PRIDE_AND_PREJUDICE_DTO.getWorkTitle())
-                .queryParam("primary_author", PRIDE_AND_PREJUDICE_DTO.getPrimaryAuthor())
+                .queryParam("work_title", namesAndAuthors.get("work_title"))
+                .queryParam("primary_author", namesAndAuthors.get("primary_author"))
                 .encode().toUriString();
 
         // when
@@ -452,13 +452,6 @@ class BookControllerIntegrationTest {
         assertThat(bookDTOResponseEntity.getBody()).hasSize(3);
         assertThat(bookDTOResponseEntity.getBody()).isNotNull();
     }
-
-    /*
-    @GetMapping
-    public ResponseEntity<List<BookDTO>> getBooks(@RequestParam Map<String, String> params) {
-        return new ResponseEntity<>(bookService.getBooks(params), HttpStatus.OK);
-    }
-     */
 
     // DELETE tests
     @Test

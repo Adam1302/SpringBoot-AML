@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +42,12 @@ class BookServiceTest {
     private BookCoverService bookCoverService;
     @Mock
     private BookDTOMapper bookDTOMapper;
+    @Mock
+    private Environment environment;
 
     @BeforeEach
     void setUp() {
-        bookService = new BookService(bookDao, bookCoverService, bookDTOMapper);
+        bookService = new BookService(bookDao, bookCoverService, bookDTOMapper, environment);
     }
 
     // READ operations

@@ -29,16 +29,17 @@ public class BookService {
     private final BookDao bookDao;
     private final BookCoverService bookCoverService;
     private final BookDTOMapper bookDTOMapper;
-    @Autowired
     private Environment environment;
 
     @Autowired // constructor will run automatically with parameters stored in Spring reference area
     public BookService(@Qualifier("postgres") BookDao bookDao,
                        BookCoverService bookCoverService,
-                       BookDTOMapper bookDTOMapper) {
+                       BookDTOMapper bookDTOMapper,
+                       Environment environment) {
         this.bookDao = bookDao;
         this.bookCoverService = bookCoverService;
         this.bookDTOMapper = bookDTOMapper;
+        this.environment = environment;
     }
 
     public int addBook(BookDTO bookDTO) {
@@ -200,9 +201,5 @@ public class BookService {
             }
         }
         return false;
-    }
-
-    private String[] getActiveProfiles() {
-        return environment.getActiveProfiles();
     }
 }
