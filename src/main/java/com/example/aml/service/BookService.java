@@ -8,6 +8,7 @@ import com.example.aml.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriUtils;
 
@@ -29,7 +30,7 @@ public class BookService {
     private final BookDao bookDao;
     private final BookCoverService bookCoverService;
     private final BookDTOMapper bookDTOMapper;
-    private Environment environment;
+    private final Environment environment;
 
     @Autowired // constructor will run automatically with parameters stored in Spring reference area
     public BookService(@Qualifier("postgres") BookDao bookDao,
@@ -149,7 +150,7 @@ public class BookService {
         if (params.containsKey(columnName)) {
             String columnValue = prepareString(params.get(columnName));
             if (!columnValue.trim().equals("")) {
-                if (isProfileActive("test")) {
+                if (environment.acceptsProfiles(Profiles.of("test"))) {
                     bookQueryFilters.add(String.format(
                             "POSITION('%s' IN LOWER(%s)) > 0",
                             columnValue.toLowerCase(), columnName));
@@ -195,7 +196,7 @@ public class BookService {
     }
 
     private boolean isProfileActive(String profile) {
-        for (String activeProfile : environment.getActiveProfiles()) {
+        for (String activeProfile : this.environment.getActiveProfiles()) {
             if (activeProfile.equals(profile)) {
                 return true;
             }
