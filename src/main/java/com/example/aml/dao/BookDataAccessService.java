@@ -57,7 +57,7 @@ public class BookDataAccessService implements BookDao {
                         bookId));
         pictureToBeDeleted.ifPresent(uuid -> jdbcTemplate.update(
                 """
-                        DELETE from pictures
+                        DELETE FROM PICTURES
                         WHERE id = ?
                         """,
                 uuid
@@ -107,7 +107,7 @@ public class BookDataAccessService implements BookDao {
             image = jdbcTemplate.queryForObject(
                     String.format("""
                         SELECT p.id, p.picture
-                         FROM pictures p
+                         FROM PICTURES p
                          WHERE p.id = '%s';
                         """, BookConstants.MISSING_IMAGE_ID),
                     (resultSet, i) -> new AssociatedImage(
@@ -175,7 +175,7 @@ public class BookDataAccessService implements BookDao {
                 bookStatement,
                 id);
         var pictureStatement = """
-                DELETE from pictures
+                DELETE FROM PICTURES
                 WHERE id = ?
                 """;
         jdbcTemplate.update(

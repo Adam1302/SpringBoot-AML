@@ -2,9 +2,13 @@ package com.example.aml.testUtils;
 
 import com.example.aml.dto.BookDTO;
 import com.example.aml.model.Book;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BookTestConstants {
     public static final Book PRIDE_AND_PREJUDICE = new Book(
@@ -45,4 +49,20 @@ public class BookTestConstants {
             122646,
             null
     );
+
+    public static JSONObject bookDTOtoJson(BookDTO bookDTO) {
+        JSONObject personJsonObject = new JSONObject();
+
+        try {
+            personJsonObject.put("work_title", bookDTO.getWorkTitle());
+            personJsonObject.put("primary_author", bookDTO.getPrimaryAuthor());
+            personJsonObject.put("word_count", bookDTO.getWordCount());
+            personJsonObject.put("year_published", bookDTO.getYearPublished());
+            personJsonObject.put("genres", bookDTO.getGenres());
+        } catch (JSONException jsonException) {
+            Logger.getAnonymousLogger().log(Level.INFO, jsonException.toString());
+        }
+
+        return personJsonObject;
+    }
 }
