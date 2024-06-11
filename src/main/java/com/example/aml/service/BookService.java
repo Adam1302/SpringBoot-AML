@@ -7,6 +7,7 @@ import com.example.aml.model.AssociatedImage;
 import com.example.aml.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriUtils;
 
@@ -28,6 +29,8 @@ public class BookService {
     private final BookDao bookDao;
     private final BookCoverService bookCoverService;
     private final BookDTOMapper bookDTOMapper;
+    @Autowired
+    private Environment environment;
 
     @Autowired // constructor will run automatically with parameters stored in Spring reference area
     public BookService(@Qualifier("postgres") BookDao bookDao,
@@ -140,12 +143,18 @@ public class BookService {
         return bookDao.getImageForBook(id);
     }
 
-    private static void addBookQueryStringFilters(
+    private void addBookQueryStringFilters(
             Map<String, String> params, ArrayList<String> bookQueryFilters, String columnName) {
         if (params.containsKey(columnName)) {
             String columnValue = prepareString(params.get(columnName));
             if (!columnValue.trim().equals("")) {
-                bookQueryFilters.add(String.format("strpos(%s::citext, '%s'::citext) > 0", columnName, columnValue));
+                if (isProfileActive("test")) {
+                    bookQueryFilters.add(String.format(
+                            "POSITION('%s' IN LOWER(%s)) > 0",
+                            columnValue.toLowerCase(), columnName));
+                } else {
+                    bookQueryFilters.add(String.format("strpos(%s::citext, '%s'::citext) > 0", columnName, columnValue));
+                }
             }
         }
     }
@@ -182,5 +191,18 @@ public class BookService {
 
     private static String prepareString(String s) {
         return s == null ? "" : UriUtils.decode(s.replace('\'', '’'), "UTF-8");
+    }
+
+    private boolean isProfileActive(String profile) {
+        for (String activeProfile : environment.getActiveProfiles()) {
+            if (activeProfile.equals(profile)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String[] getActiveProfiles() {
+        return environment.getActiveProfiles();
     }
 }

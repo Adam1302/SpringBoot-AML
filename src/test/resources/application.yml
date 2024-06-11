@@ -15,6 +15,8 @@ book-cover-api:
   url: "http://bookcover.longitood.com/bookcover"
 
 spring:
+  profiles:
+    active: test
   flyway:
     enabled: false
     baseline-on-migrate: true

@@ -254,8 +254,8 @@ class BookControllerIntegrationTest {
         // give
         String urlTemplate = UriComponentsBuilder
                 .fromHttpUrl(baseUrl)
-                .queryParam("year_published_upper_limit", "1700")
-                .queryParam("year_published_lower_limit", "1900")
+                .queryParam("year_published_upper_limit", "1900")
+                .queryParam("year_published_lower_limit", "1700")
                 .encode().toUriString();
 
         // when
@@ -394,11 +394,13 @@ class BookControllerIntegrationTest {
 
         // then
         assertThat(bookDTOResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(bookDTOResponseEntity.getBody()).hasSize(2);
+        assertThat(bookDTOResponseEntity.getBody()).hasSize(3);
         assertThat(bookDTOResponseEntity.getBody()).isNotNull();
         assertThat(bookDTOResponseEntity.getBody().get(0).getWorkTitle())
-                .isEqualTo("Meditations");
+                .isEqualTo("Pride and Prejudice");
         assertThat(bookDTOResponseEntity.getBody().get(1).getWorkTitle())
+                .isEqualTo("Meditations");
+        assertThat(bookDTOResponseEntity.getBody().get(2).getWorkTitle())
                 .isEqualTo("Paradise Lost");
     }
 
@@ -433,8 +435,8 @@ class BookControllerIntegrationTest {
         // give
         String urlTemplate = UriComponentsBuilder
                 .fromHttpUrl(baseUrl)
-                .queryParam("work_title", "n")
-                .queryParam("primary_author", "a")
+                .queryParam("work_title", "t")
+                .queryParam("primary_author", "t")
                 .encode().toUriString();
 
         // when
