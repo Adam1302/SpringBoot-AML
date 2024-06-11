@@ -7,7 +7,10 @@ import com.example.aml.model.AssociatedImage;
 import com.example.aml.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,14 +30,17 @@ public class BookService {
     private final BookDao bookDao;
     private final BookCoverService bookCoverService;
     private final BookDTOMapper bookDTOMapper;
+    private final Environment environment;
 
     @Autowired // constructor will run automatically with parameters stored in Spring reference area
     public BookService(@Qualifier("postgres") BookDao bookDao,
                        BookCoverService bookCoverService,
-                       BookDTOMapper bookDTOMapper) {
+                       BookDTOMapper bookDTOMapper,
+                       Environment environment) {
         this.bookDao = bookDao;
         this.bookCoverService = bookCoverService;
         this.bookDTOMapper = bookDTOMapper;
+        this.environment = environment;
     }
 
     public int addBook(BookDTO bookDTO) {
@@ -139,12 +145,18 @@ public class BookService {
         return bookDao.getImageForBook(id);
     }
 
-    private static void addBookQueryStringFilters(
+    private void addBookQueryStringFilters(
             Map<String, String> params, ArrayList<String> bookQueryFilters, String columnName) {
         if (params.containsKey(columnName)) {
             String columnValue = prepareString(params.get(columnName));
             if (!columnValue.trim().equals("")) {
-                bookQueryFilters.add(String.format("strpos(%s::citext, '%s'::citext) > 0", columnName, columnValue));
+                if (environment.acceptsProfiles(Profiles.of("test"))) {
+                    bookQueryFilters.add(String.format(
+                            "POSITION('%s' IN LOWER(%s)) > 0",
+                            columnValue.toLowerCase(), columnName));
+                } else {
+                    bookQueryFilters.add(String.format("strpos(%s::citext, '%s'::citext) > 0", columnName, columnValue));
+                }
             }
         }
     }
@@ -158,7 +170,7 @@ public class BookService {
                 try {
                     Integer limit = Integer.parseInt(limitAsString);
                     bookQueryFilters.add(
-                            String.format("%s %s %d", columnName, (upper? " <= " : " >= "), limit));
+                            String.format("%s %s %d", columnName, (upper? "<=" : ">="), limit));
                 } catch (NumberFormatException err) {
                     Logger.getAnonymousLogger().log(
                             Level.INFO, err.getMessage());
@@ -180,6 +192,15 @@ public class BookService {
     }
 
     private static String prepareString(String s) {
-        return s.replace('\'', '’');
+        return s == null ? "" : UriUtils.decode(s.replace('\'', '’'), "UTF-8");
+    }
+
+    private boolean isProfileActive(String profile) {
+        for (String activeProfile : this.environment.getActiveProfiles()) {
+            if (activeProfile.equals(profile)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -6,27 +6,19 @@
 # Connection Details for Database
 app:
   datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/demodb
-    username: postgres
-    password: password
-    pool-size: 30
-
-# swagger-ui custom path
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-  api-docs:
-    enabled: true
+    jdbc-url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    username: sa
+    password: sa
+    driverClassName: org.h2.Driver
 
 book-cover-api:
   url: "http://bookcover.longitood.com/bookcover"
 
 spring:
+  profiles:
+    active: test
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     validate-on-migrate: false
-  profiles:
-    active: dev
 

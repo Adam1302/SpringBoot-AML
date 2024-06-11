@@ -3,7 +3,6 @@ package com.example.aml.dao;
 import com.example.aml.model.AssociatedImage;
 import com.example.aml.model.Book;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,7 +22,7 @@ public interface BookDao {
 
     Optional<Book> selectBookById(UUID id);
 
-    List<Book> selectBooks(ArrayList<String> bookQueryWhereFilters, ArrayList<String> bookQueryOtherFilters);
+    List<Book> selectBooks(List<String> bookQueryWhereFilters, List<String> bookQueryOtherFilters);
 
     AssociatedImage getImageForBook(UUID id);
 

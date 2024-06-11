@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +57,7 @@ public class BookDataAccessService implements BookDao {
                         bookId));
         pictureToBeDeleted.ifPresent(uuid -> jdbcTemplate.update(
                 """
-                        DELETE from pictures
+                        DELETE FROM PICTURES
                         WHERE id = ?
                         """,
                 uuid
@@ -108,7 +107,7 @@ public class BookDataAccessService implements BookDao {
             image = jdbcTemplate.queryForObject(
                     String.format("""
                         SELECT p.id, p.picture
-                         FROM pictures p
+                         FROM PICTURES p
                          WHERE p.id = '%s';
                         """, BookConstants.MISSING_IMAGE_ID),
                     (resultSet, i) -> new AssociatedImage(
@@ -140,24 +139,31 @@ public class BookDataAccessService implements BookDao {
 
     @Override
     public int deleteBookById(UUID id) {
-        Optional<Book> toBeDeleted = Optional.ofNullable(
-                jdbcTemplate.queryForObject(
-                        """
-                        SELECT
-                            id,
-                            work_title,
-                            primary_author,
-                            year_published,
-                            word_count,
-                            picture_id,
-                            created_at,
-                            updated_at,
-                            genres
-                        FROM book
-                        WHERE id = ?
-                        """,
-                        bookRowMapper,
-                        id));
+        Optional<Book> toBeDeleted = Optional.empty();
+        try {
+            toBeDeleted = Optional.ofNullable(
+                    jdbcTemplate.queryForObject(
+                            """
+                            SELECT
+                                id,
+                                work_title,
+                                primary_author,
+                                year_published,
+                                word_count,
+                                picture_id,
+                                created_at,
+                                updated_at,
+                                genres
+                            FROM book
+                            WHERE id = ?
+                            """,
+                            bookRowMapper,
+                            id));
+        } catch (EmptyResultDataAccessException e) {
+            Logger.getAnonymousLogger().log(
+                    Level.INFO,
+                    String.format("Book with id %s not found", id.toString()));
+        }
         if (toBeDeleted.isEmpty()) {
             return 0;
         }
@@ -169,7 +175,7 @@ public class BookDataAccessService implements BookDao {
                 bookStatement,
                 id);
         var pictureStatement = """
-                DELETE from pictures
+                DELETE FROM PICTURES
                 WHERE id = ?
                 """;
         jdbcTemplate.update(
@@ -188,7 +194,7 @@ public class BookDataAccessService implements BookDao {
                     primary_author = ?,
                     year_published = ?,
                     word_count = ?,
-                    updated_by = ?
+                    updated_at = ?
                 WHERE id = ?
                 """;
         return jdbcTemplate.update(
@@ -293,9 +299,9 @@ public class BookDataAccessService implements BookDao {
 
     @Override
     public List<Book> selectBooks(
-            ArrayList<String> bookQueryWhereFilters, ArrayList<String> bookQueryOtherFilters) {
+            List<String> bookQueryWhereFilters, List<String> bookQueryOtherFilters) {
         String queryWhereFilters = getWhereFiltersFromArray(bookQueryWhereFilters);
-        String queryOtherFilters = getOtherFiltersFromOther(bookQueryOtherFilters);
+        String queryOtherFilters = getOtherFiltersFromArray(bookQueryOtherFilters);
 
         return jdbcTemplate.query(
                 String.format("""
@@ -316,7 +322,7 @@ public class BookDataAccessService implements BookDao {
                 bookRowMapper);
     }
 
-    private static String getWhereFiltersFromArray(ArrayList<String> bookQueryFilters) {
+    private static String getWhereFiltersFromArray(List<String> bookQueryFilters) {
         StringBuilder bookQueryFiltersAsString = new StringBuilder();
 
         if (!bookQueryFilters.isEmpty()) {
@@ -332,7 +338,7 @@ public class BookDataAccessService implements BookDao {
         return bookQueryFiltersAsString.toString();
     }
 
-    private static String getOtherFiltersFromOther(ArrayList<String> bookQueryFilters) {
+    private static String getOtherFiltersFromArray(List<String> bookQueryFilters) {
         StringBuilder bookQueryFiltersAsString = new StringBuilder();
         for (String bookQueryFilter : bookQueryFilters) {
             bookQueryFiltersAsString.append(bookQueryFilter);

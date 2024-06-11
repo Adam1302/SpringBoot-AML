@@ -83,7 +83,7 @@ public class MockBookDataAccessService implements BookDao {
 
     @Override
     public List<Book> selectBooks(
-            ArrayList<String> bookQueryWhereFilters, ArrayList<String> bookQueryOtherFilters) {
+            List<String> bookQueryWhereFilters, List<String> bookQueryOtherFilters) {
         // not maintained
         return bookDB.stream().filter(
                 book -> book.getPrimaryAuthor().equals("")).toList();
