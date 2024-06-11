@@ -18,8 +18,8 @@ public class BookTestConstants {
             1813,
             122189,
             null,
-            new Date(1577854800000L),
-            new Date(1609477200000L),
+            new Date(1577836800000L),
+            new Date(1609459200000L),
             null
     );
     public static final Book SENSE_AND_SENSIBILITY = new Book(
@@ -29,8 +29,8 @@ public class BookTestConstants {
             1811,
             122646,
             null,
-            new Date(1577854800000L),
-            new Date(1609477200000L),
+            new Date(1577836800000L),
+            new Date(1609459200000L),
             null
     );
     public static final BookDTO PRIDE_AND_PREJUDICE_DTO = new BookDTO(
