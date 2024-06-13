@@ -29,7 +29,6 @@ public class BookService {
     private final BookDao bookDao;
     private final BookCoverService bookCoverService;
     private final BookDTOMapper bookDTOMapper;
-    // private final Environment environment;
     private BookConfig bookConfig;
 
     @Autowired // constructor will run automatically with parameters stored in Spring reference area
