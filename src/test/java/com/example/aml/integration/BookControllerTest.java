@@ -510,7 +510,7 @@ class BookControllerTest {
             response = restTemplate.postForObject(baseUrl, SENSE_AND_SENSIBILITY_DTO, Integer.class);
         } catch(Exception exception) {
             Logger.getAnonymousLogger().log(
-                    Level.INFO,
+                    Level.SEVERE,
                     String.format(
                             """
                             Error during test addBook while adding: %s by %s
@@ -535,7 +535,7 @@ class BookControllerTest {
             response = restTemplate.postForObject(baseUrl, PRIDE_AND_PREJUDICE_DTO, Integer.class);
         } catch(Exception exception) {
             Logger.getAnonymousLogger().log(
-                    Level.INFO,
+                    Level.SEVERE,
                     String.format(
                             """
                             Error during test addBook while adding: %s by %s

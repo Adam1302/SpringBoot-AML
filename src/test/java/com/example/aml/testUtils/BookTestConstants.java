@@ -60,7 +60,7 @@ public class BookTestConstants {
             personJsonObject.put("year_published", bookDTO.getYearPublished());
             personJsonObject.put("genres", bookDTO.getGenres());
         } catch (JSONException jsonException) {
-            Logger.getAnonymousLogger().log(Level.INFO, jsonException.toString());
+            Logger.getAnonymousLogger().log(Level.SEVERE, jsonException.toString());
         }
 
         return personJsonObject;

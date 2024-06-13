@@ -45,11 +45,11 @@ public class BookCoverService {
             url = jsonNode.get("url").asText();
         } catch (HttpServerErrorException err) {
             Logger.getAnonymousLogger().log(
-                    Level.INFO,
+                    Level.SEVERE,
                     String.format("Book Cover not found for '%s' by '%s'", bookTitle, authorName));
         } catch (JsonProcessingException e) {
             Logger.getAnonymousLogger().log(
-                    Level.INFO,
+                    Level.SEVERE,
                     String.format("Unable to parse JSON. Error: %s", e));
         }
         return url;
