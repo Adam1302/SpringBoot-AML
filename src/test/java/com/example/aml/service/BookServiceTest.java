@@ -1,5 +1,6 @@
 package com.example.aml.service;
 
+import com.example.aml.config.BookConfig;
 import com.example.aml.dao.BookDataAccessService;
 import com.example.aml.dto.BookDTO;
 import com.example.aml.mapper.BookDTOMapper;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +43,11 @@ class BookServiceTest {
     @Mock
     private BookDTOMapper bookDTOMapper;
     @Mock
-    private Environment environment;
+    private BookConfig bookConfig;
 
     @BeforeEach
     void setUp() {
-        bookService = new BookService(bookDao, bookCoverService, bookDTOMapper, environment);
+        bookService = new BookService(bookDao, bookCoverService, bookDTOMapper, bookConfig);
     }
 
     // READ operations

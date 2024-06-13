@@ -1,5 +1,6 @@
 package com.example.aml.service;
 
+import com.example.aml.config.BookConfig;
 import com.example.aml.dao.BookDao;
 import com.example.aml.dto.BookDTO;
 import com.example.aml.mapper.BookDTOMapper;
@@ -7,8 +8,6 @@ import com.example.aml.model.AssociatedImage;
 import com.example.aml.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriUtils;
 
@@ -30,17 +29,18 @@ public class BookService {
     private final BookDao bookDao;
     private final BookCoverService bookCoverService;
     private final BookDTOMapper bookDTOMapper;
-    private final Environment environment;
+    // private final Environment environment;
+    private BookConfig bookConfig;
 
     @Autowired // constructor will run automatically with parameters stored in Spring reference area
     public BookService(@Qualifier("postgres") BookDao bookDao,
                        BookCoverService bookCoverService,
                        BookDTOMapper bookDTOMapper,
-                       Environment environment) {
+                       BookConfig bookConfig) {
         this.bookDao = bookDao;
         this.bookCoverService = bookCoverService;
         this.bookDTOMapper = bookDTOMapper;
-        this.environment = environment;
+        this.bookConfig = bookConfig;
     }
 
     public int addBook(BookDTO bookDTO) {
@@ -150,7 +150,7 @@ public class BookService {
         if (params.containsKey(columnName)) {
             String columnValue = prepareString(params.get(columnName));
             if (!columnValue.trim().equals("")) {
-                if (environment.acceptsProfiles(Profiles.of("test"))) {
+                if (isProfileActive("test")) {
                     bookQueryFilters.add(String.format(
                             "POSITION('%s' IN LOWER(%s)) > 0",
                             columnValue.toLowerCase(), columnName));
@@ -173,7 +173,7 @@ public class BookService {
                             String.format("%s %s %d", columnName, (upper? "<=" : ">="), limit));
                 } catch (NumberFormatException err) {
                     Logger.getAnonymousLogger().log(
-                            Level.INFO, err.getMessage());
+                            Level.SEVERE, err.getMessage());
                 }
             }
         }
@@ -196,11 +196,6 @@ public class BookService {
     }
 
     private boolean isProfileActive(String profile) {
-        for (String activeProfile : this.environment.getActiveProfiles()) {
-            if (activeProfile.equals(profile)) {
-                return true;
-            }
-        }
-        return false;
+        return Objects.equals(profile, bookConfig.getActiveProfile());
     }
 }

@@ -103,7 +103,7 @@ public class BookDataAccessService implements BookDao {
             );
         } catch (Exception e) {
             Logger.getAnonymousLogger().log(
-                    Level.INFO, e.toString());
+                    Level.INFO, String.format("Couldn't find cover image for book with ID %s", bookId.toString()));
             image = jdbcTemplate.queryForObject(
                     String.format("""
                         SELECT p.id, p.picture

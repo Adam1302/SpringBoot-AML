@@ -1,0 +1,12 @@
+# Connection Details for Database
+app:
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/demodb
+    username: postgres
+    password: password
+    pool-size: 30
+
+logging:
+  level:
+    org:
+      springframework: info
