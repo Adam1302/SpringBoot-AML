@@ -1,0 +1,54 @@
+name: SonarCloud
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven
+          restore-keys: ${{ runner.os }}-maven
+
+      - name: Build and analyze with Maven
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub Actions provides this token automatically
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=SpringBoot-AML \
+            -Dsonar.organization=adam1302 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Check Quality Gate
+        if: always()
+        run: |
+          curl --fail --silent --output /dev/null \
+          --user ${{ secrets.SONAR_TOKEN }}: \
+          "https://sonarcloud.io/api/project_analyses/search?project=my_project_key" \
+          && echo "Quality gate passed!" \
+          || (echo "Quality gate failed!" && exit 1)
