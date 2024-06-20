@@ -2,9 +2,8 @@ name: Monthly Trivy Scan
 
 on:
   schedule:
-    # Runs at 00:00 on the first day of every month
-    - cron: '0 0 1 * *'
-  pull_request:
+    # Runs at 00:00 on the first day of every week
+    - cron: '0 0 * * 0'
 
 jobs:
   trivy-scan:
