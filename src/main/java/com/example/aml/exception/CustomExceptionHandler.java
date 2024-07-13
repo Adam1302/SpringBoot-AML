@@ -1,6 +1,5 @@
 package com.example.aml.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +11,6 @@ public class CustomExceptionHandler {
     @ExceptionHandler(BookException.class)
     public ResponseEntity<List<ErrorModel>> handleBookException(BookException bookException) {
         return new ResponseEntity<List<ErrorModel>>
-                (bookException.getErrorList(), HttpStatus.BAD_REQUEST);
+                (bookException.getErrorList(), bookException.getHttpStatusCode());
     }
 }
