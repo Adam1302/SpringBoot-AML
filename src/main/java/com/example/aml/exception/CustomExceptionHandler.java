@@ -10,7 +10,7 @@ import java.util.List;
 public class CustomExceptionHandler {
     @ExceptionHandler(BookException.class)
     public ResponseEntity<List<ErrorModel>> handleBookException(BookException bookException) {
-        return new ResponseEntity<List<ErrorModel>>
+        return new ResponseEntity<>
                 (bookException.getErrorList(), bookException.getHttpStatusCode());
     }
 }

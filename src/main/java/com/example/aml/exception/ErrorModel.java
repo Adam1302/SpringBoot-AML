@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ErrorModel {
     @NonNull
-    private String code;
+    private ErrorCode errorCode;
 
     @NonNull
-    private String message;
+    private String extraInfo;
 }
