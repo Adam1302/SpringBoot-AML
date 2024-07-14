@@ -457,7 +457,8 @@ class BookControllerTest {
     // DELETE tests
     @Test
     void deleteBookTestBookExists() {
-        // give
+        // given: Prepare the book ID that does not exist
+        UUID bookId = SENSE_AND_SENSIBILITY_DTO.getId();
 
         // when
         ResponseEntity<BookDTO> bookDTOResponseEntityShouldBePresent =
@@ -468,15 +469,16 @@ class BookControllerTest {
                 baseUrl + '/' + PRIDE_AND_PREJUDICE_DTO.getId().toString(),
                 BookDTO.class);
         ResponseEntity<BookDTO> bookDTOResponseEntityShouldntBePresent = null;
-        try {
-            bookDTOResponseEntityShouldntBePresent =
-                    restTemplate.getForEntity(
-                            baseUrl + '/' + PRIDE_AND_PREJUDICE_DTO.getId().toString(),
-                            BookDTO.class);
-        } catch (HttpClientErrorException httpClientErrorException) {
-            assertThat(httpClientErrorException.getResponseBodyAs(BookDTO.class)).isNull();
-            assertThat(httpClientErrorException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        }
+        assertThatThrownBy(() -> restTemplate.getForEntity(
+                baseUrl + '/' + bookId.toString(),
+                BookDTO.class))
+                .isInstanceOf(HttpClientErrorException.class)
+                .satisfies(exception -> {
+                    HttpClientErrorException httpException = (HttpClientErrorException) exception;
+                    assertThat(httpException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class))).isNotEmpty();
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class)).size()).isOne();
+                });
 
         // then
         assertThat(bookDTOResponseEntityShouldBePresent.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -586,6 +588,9 @@ class BookControllerTest {
 
     @Test
     void putBookTestBookDoesNotExist() {
+        // given: Prepare the book ID that does not exist
+        UUID bookId = SENSE_AND_SENSIBILITY_DTO.getId();
+
         // give
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -598,20 +603,16 @@ class BookControllerTest {
                 baseUrl + '/' + SENSE_AND_SENSIBILITY_DTO.getId().toString(),
                 request);
         ResponseEntity<BookDTO> bookDTOResponseEntity = null;
-
-        try {
-            bookDTOResponseEntity =
-                    restTemplate.getForEntity(
-                            baseUrl + '/' + SENSE_AND_SENSIBILITY_DTO.getId().toString(),
-                            BookDTO.class);
-        } catch (HttpClientErrorException exception) {
-            assertThat(exception.getResponseBodyAs(BookDTO.class)).isNull();
-            assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        }
-
-
-        // then
-        assertThat(bookDTOResponseEntity).isNull();
+        assertThatThrownBy(() -> restTemplate.getForEntity(
+                baseUrl + '/' + bookId.toString(),
+                BookDTO.class))
+                .isInstanceOf(HttpClientErrorException.class)
+                .satisfies(exception -> {
+                    HttpClientErrorException httpException = (HttpClientErrorException) exception;
+                    assertThat(httpException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class))).isNotEmpty();
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class)).size()).isOne();
+                });
     }
 
     @Test
@@ -690,6 +691,9 @@ class BookControllerTest {
 
     @Test
     void patchBookTestBookDoesNotExist() {
+        // given: Prepare the book ID that does not exist
+        UUID bookId = SENSE_AND_SENSIBILITY_DTO.getId();
+
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -708,19 +712,18 @@ class BookControllerTest {
                         urlTemplate, request, Integer.class);
 
         ResponseEntity<BookDTO> bookDTOResponseEntity = null;
-        try {
-            bookDTOResponseEntity =
-                    restTemplate.getForEntity(
-                            baseUrl + '/' + SENSE_AND_SENSIBILITY_DTO.getId().toString(),
-                            BookDTO.class);
-        } catch (HttpClientErrorException exception) {
-            assertThat(exception.getResponseBodyAs(BookDTO.class)).isNull();
-            assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        }
-        // then
-        assertThat(bookDTOResponseEntity).isNull();
+        assertThatThrownBy(() -> restTemplate.getForEntity(
+                baseUrl + '/' + bookId.toString(),
+                BookDTO.class))
+                .isInstanceOf(HttpClientErrorException.class)
+                .satisfies(exception -> {
+                            HttpClientErrorException httpException = (HttpClientErrorException) exception;
+                            assertThat(httpException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                            assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class))).isNotEmpty();
+                            assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class)).size()).isOne();
+                        });
 
-        // TO-DO: integerResponse
+        assertThat(integerResponse).isNull();
     }
 
 
