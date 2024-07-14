@@ -49,6 +49,14 @@ public class BookTestConstants {
             122646,
             null
     );
+    public static final BookDTO EMPTY_TITLE_DTO = new BookDTO(
+            UUID.fromString("1f3acc9e-a96a-47db-aee1-93d8715b979e"),
+            "",
+            "Jane Austen",
+            1811,
+            122646,
+            null
+    );
 
     public static JSONObject bookDTOtoJson(BookDTO bookDTO) {
         JSONObject personJsonObject = new JSONObject();

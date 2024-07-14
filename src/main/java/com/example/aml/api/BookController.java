@@ -37,7 +37,7 @@ public class BookController {
     }
 
     @PostMapping // tells Spring this is a POST request (as opposed to get/put/etc.)
-    public ResponseEntity<Integer> addBook(@RequestBody BookDTO book) {
+    public ResponseEntity<Integer> addBook(@Valid @RequestBody BookDTO book) {
         // @RequestBody takes the body of the api request and instantiates a Book based off of it
         return new ResponseEntity<>(
                 bookService.addBook(book),
@@ -48,14 +48,7 @@ public class BookController {
     @GetMapping(path = "{id}") // Basically, we add the path (in this case, the ID) to the link
     // ex. localhost:8080/api/v1/book/83e0eb8e-7c42-42a8-a7ab-d179a4b1cf24
     public ResponseEntity<BookDTO> selectBookById(@PathVariable("id") UUID id) {
-        BookDTO bookDTO =
-                bookService.selectBookById(id)
-                .orElse(null);
-        if (bookDTO == null) {
-            return new ResponseEntity<>(bookDTO, HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(bookDTO, HttpStatus.OK);
+        return new ResponseEntity<>(bookService.selectBookById(id), HttpStatus.OK);
     }
 
     @GetMapping(path = "byNameAndAuthor") // Basically, we add the path (in this case, the ID) to the link

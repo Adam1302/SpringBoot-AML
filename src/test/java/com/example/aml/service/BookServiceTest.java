@@ -3,6 +3,9 @@ package com.example.aml.service;
 import com.example.aml.config.BookConfig;
 import com.example.aml.dao.BookDataAccessService;
 import com.example.aml.dto.BookDTO;
+import com.example.aml.exception.BookException;
+import com.example.aml.exception.ErrorCode;
+import com.example.aml.exception.ErrorModel;
 import com.example.aml.mapper.BookDTOMapper;
 import com.example.aml.model.Book;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +25,7 @@ import java.util.UUID;
 import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE;
 import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -74,9 +79,17 @@ class BookServiceTest {
         //when
         when(bookDao.selectBookById(any(UUID.class)))
                 .thenReturn(Optional.empty());
-        bookService.selectBookById(PRIDE_AND_PREJUDICE.getId());
 
         //then
+        assertThatThrownBy(() -> bookService.selectBookById(PRIDE_AND_PREJUDICE.getId()))
+                .isInstanceOf(BookException.class)
+                .satisfies(exception -> {
+                    BookException bookException = (BookException) exception;
+                    assertThat(bookException.getHttpStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    assertThat(bookException.getErrorList()).hasSize(1);
+                    ErrorModel error = bookException.getErrorList().get(0);
+                    assertThat(error.getErrorCode()).isEqualTo(ErrorCode.ENTRY_WITH_ID_NOT_FOUND);
+                });
         ArgumentCaptor<UUID> bookIdCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(bookDao).selectBookById(bookIdCaptor.capture());
         assertThat(bookIdCaptor.getValue()).isEqualTo(PRIDE_AND_PREJUDICE.getId());
@@ -303,19 +316,15 @@ class BookServiceTest {
             );
 
             //when
-            when(bookDao.selectBooks(anyList(), anyList())).thenReturn(List.of());
-            bookService.getBooks(params);
-
-            //then
-            ArgumentCaptor<ArrayList<String>> whereFiltersCaptor =
-                    ArgumentCaptor.forClass(ArrayList.class);
-            ArgumentCaptor<ArrayList<String>> otherFiltersCaptor =
-                    ArgumentCaptor.forClass(ArrayList.class);
-            verify(bookDao).selectBooks(
-                    whereFiltersCaptor.capture(),
-                    otherFiltersCaptor.capture());
-            assertThat(otherFiltersCaptor.getValue()).isEmpty();
-            assertThat(whereFiltersCaptor.getValue()).isEmpty();
+            assertThatThrownBy(() -> bookService.getBooks(params))
+                    .isInstanceOf(BookException.class)
+                    .satisfies(exception -> {
+                        BookException bookException = (BookException) exception;
+                        assertThat(bookException.getHttpStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+                        assertThat(bookException.getErrorList()).hasSize(1);
+                        ErrorModel error = bookException.getErrorList().get(0);
+                        assertThat(error.getErrorCode()).isEqualTo(ErrorCode.INVALID_FIELD);
+                    });
     }
 
     @Test
