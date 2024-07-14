@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.example.aml.testUtils.BookTestConstants.EMPTY_TITLE_DTO;
 import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE_DTO;
 import static com.example.aml.testUtils.BookTestConstants.SENSE_AND_SENSIBILITY_DTO;
 import static com.example.aml.testUtils.BookTestConstants.bookDTOtoJson;
@@ -552,6 +553,18 @@ class BookControllerTest {
                             SENSE_AND_SENSIBILITY_DTO.getPrimaryAuthor()));
         }
         assertThat(response).isZero();
+    }
+
+    @Test
+    void addBookTestEmptyTitle() {
+        assertThatThrownBy(() -> restTemplate.postForObject(baseUrl, EMPTY_TITLE_DTO, Integer.class))
+                .isInstanceOf(HttpClientErrorException.class)
+                .satisfies(exception -> {
+                    HttpClientErrorException httpException = (HttpClientErrorException) exception;
+                    assertThat(httpException.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class))).isNotEmpty();
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class)).size()).isOne();
+                });
     }
 
     // PUT tests

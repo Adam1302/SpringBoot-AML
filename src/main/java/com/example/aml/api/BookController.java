@@ -37,7 +37,7 @@ public class BookController {
     }
 
     @PostMapping // tells Spring this is a POST request (as opposed to get/put/etc.)
-    public ResponseEntity<Integer> addBook(@RequestBody BookDTO book) {
+    public ResponseEntity<Integer> addBook(@Valid @RequestBody BookDTO book) {
         // @RequestBody takes the body of the api request and instantiates a Book based off of it
         return new ResponseEntity<>(
                 bookService.addBook(book),

@@ -15,10 +15,22 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @RequiredArgsConstructor(onConstructor=@__(@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)))
 public class BookDTO {
-    @JsonProperty("id") private final UUID id;
-    @NotBlank @JsonProperty("work_title") private final String workTitle;
-    @JsonProperty("primary_author") private final String primaryAuthor;
-    @JsonProperty("year_published") private final int yearPublished;
-    @JsonProperty("word_count") private final int wordCount;
-    @JsonProperty("genres") private final String[] genres;
+    @JsonProperty("id")
+    private final UUID id;
+
+    @NotBlank(message = "Work title cannot be empty")
+    @JsonProperty("work_title")
+    private final String workTitle;
+
+    @JsonProperty("primary_author")
+    private final String primaryAuthor;
+
+    @JsonProperty("year_published")
+    private final int yearPublished;
+
+    @JsonProperty("word_count")
+    private final int wordCount;
+
+    @JsonProperty("genres")
+    private final String[] genres;
 }
