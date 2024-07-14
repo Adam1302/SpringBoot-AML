@@ -91,7 +91,6 @@ public class BookService {
             errorList.add(new ErrorModel(ErrorCode.ENTRY_WITH_ID_NOT_FOUND));
 
             throwBookException(HttpStatus.NOT_FOUND, errorList);
-            return null;
         }
 
         return optionalBook.map(bookDTOMapper).orElseThrow();
