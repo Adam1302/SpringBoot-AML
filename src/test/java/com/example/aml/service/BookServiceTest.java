@@ -316,19 +316,15 @@ class BookServiceTest {
             );
 
             //when
-            when(bookDao.selectBooks(anyList(), anyList())).thenReturn(List.of());
-            bookService.getBooks(params);
-
-            //then
-            ArgumentCaptor<ArrayList<String>> whereFiltersCaptor =
-                    ArgumentCaptor.forClass(ArrayList.class);
-            ArgumentCaptor<ArrayList<String>> otherFiltersCaptor =
-                    ArgumentCaptor.forClass(ArrayList.class);
-            verify(bookDao).selectBooks(
-                    whereFiltersCaptor.capture(),
-                    otherFiltersCaptor.capture());
-            assertThat(otherFiltersCaptor.getValue()).isEmpty();
-            assertThat(whereFiltersCaptor.getValue()).isEmpty();
+            assertThatThrownBy(() -> bookService.getBooks(params))
+                    .isInstanceOf(BookException.class)
+                    .satisfies(exception -> {
+                        BookException bookException = (BookException) exception;
+                        assertThat(bookException.getHttpStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+                        assertThat(bookException.getErrorList()).hasSize(1);
+                        ErrorModel error = bookException.getErrorList().get(0);
+                        assertThat(error.getErrorCode()).isEqualTo(ErrorCode.INVALID_FIELD);
+                    });
     }
 
     @Test

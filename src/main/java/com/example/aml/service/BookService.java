@@ -187,6 +187,10 @@ public class BookService {
                 } catch (NumberFormatException err) {
                     Logger.getAnonymousLogger().log(
                             Level.SEVERE, err.getMessage());
+
+                    ArrayList<ErrorModel> errorList = new ArrayList<>();
+                    errorList.add(new ErrorModel(ErrorCode.INVALID_FIELD));
+                    throwBookException(HttpStatus.NOT_ACCEPTABLE, errorList);
                 }
             }
         }

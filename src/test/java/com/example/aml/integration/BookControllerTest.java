@@ -615,7 +615,6 @@ class BookControllerTest {
         restTemplate.put(
                 baseUrl + '/' + SENSE_AND_SENSIBILITY_DTO.getId().toString(),
                 request);
-        ResponseEntity<BookDTO> bookDTOResponseEntity = null;
         assertThatThrownBy(() -> restTemplate.getForEntity(
                 baseUrl + '/' + bookId.toString(),
                 BookDTO.class))
@@ -724,7 +723,6 @@ class BookControllerTest {
                 restTemplate.patchForObject(
                         urlTemplate, request, Integer.class);
 
-        ResponseEntity<BookDTO> bookDTOResponseEntity = null;
         assertThatThrownBy(() -> restTemplate.getForEntity(
                 baseUrl + '/' + bookId.toString(),
                 BookDTO.class))
