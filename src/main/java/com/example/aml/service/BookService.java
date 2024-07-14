@@ -3,11 +3,14 @@ package com.example.aml.service;
 import com.example.aml.config.BookConfig;
 import com.example.aml.dao.BookDao;
 import com.example.aml.dto.BookDTO;
+import com.example.aml.exception.ErrorCode;
+import com.example.aml.exception.ErrorModel;
 import com.example.aml.mapper.BookDTOMapper;
 import com.example.aml.model.AssociatedImage;
 import com.example.aml.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriUtils;
 
@@ -23,6 +26,7 @@ import java.util.logging.Logger;
 
 import static com.example.aml.utility.BookConstants.BOOK_FIELD_PRIMARY_AUTHOR;
 import static com.example.aml.utility.BookConstants.BOOK_FIELD_WORK_TITLE;
+import static com.example.aml.utility.ExceptionUtils.throwBookException;
 
 @Service
 public class BookService {
@@ -79,8 +83,18 @@ public class BookService {
         return insertionResult;
     }
 
-    public Optional<BookDTO> selectBookById(UUID id) {
-        return bookDao.selectBookById(id).map(bookDTOMapper);
+    public BookDTO selectBookById(UUID id) {
+        Optional<Book> optionalBook = bookDao.selectBookById(id);
+
+        if (optionalBook.isEmpty()) {
+            ArrayList<ErrorModel> errorList = new ArrayList<>();
+            errorList.add(new ErrorModel(ErrorCode.ENTRY_WITH_ID_NOT_FOUND));
+
+            throwBookException(HttpStatus.NOT_FOUND, errorList);
+            return null;
+        }
+
+        return optionalBook.map(bookDTOMapper).orElseThrow();
     }
 
     public Optional<BookDTO> selectBookByNameAndAuthor(Map<String, String> params) {

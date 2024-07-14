@@ -24,6 +24,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +33,7 @@ import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE_DT
 import static com.example.aml.testUtils.BookTestConstants.SENSE_AND_SENSIBILITY_DTO;
 import static com.example.aml.testUtils.BookTestConstants.bookDTOtoJson;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 // @JdbcTest
 @Sql(
@@ -86,22 +89,20 @@ class BookControllerTest {
 
     @Test
     void getBookByIdTestBookDoesNotExist() {
-        // give
+        // given: Prepare the book ID that does not exist
+        UUID bookId = SENSE_AND_SENSIBILITY_DTO.getId();
 
-        // when
-        ResponseEntity<BookDTO> bookDTOResponseEntity = null;
-
-        try {
-            bookDTOResponseEntity =
-                    restTemplate.getForEntity(
-                            baseUrl + '/' + SENSE_AND_SENSIBILITY_DTO.getId().toString(),
-                            BookDTO.class);
-        } catch (HttpClientErrorException exception) {
-            assertThat(exception.getResponseBodyAs(BookDTO.class)).isNull();
-            assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        }
-
-        assertThat(bookDTOResponseEntity).isNull();
+        // when & then: expect an exception to be thrown and verify the status code
+        assertThatThrownBy(() -> restTemplate.getForEntity(
+                baseUrl + '/' + bookId.toString(),
+                BookDTO.class))
+                .isInstanceOf(HttpClientErrorException.class)
+                .satisfies(exception -> {
+                    HttpClientErrorException httpException = (HttpClientErrorException) exception;
+                    assertThat(httpException.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class))).isNotEmpty();
+                    assertThat(Objects.requireNonNull(httpException.getResponseBodyAs(List.class)).size()).isOne();
+                });
     }
 
     @Test
