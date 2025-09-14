@@ -10,7 +10,11 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.example.aml.testUtils.TestUtils.parseDateOrGetDefault;
+
 public class BookTestConstants {
+    public static Date DEFAULT_DATE = new Date(1577836800000L);
+
     public static final Book PRIDE_AND_PREJUDICE = new Book(
             UUID.fromString("b3467d11-18da-48e4-a761-af4cc2ef6761"),
             "Pride and Prejudice",
@@ -18,8 +22,8 @@ public class BookTestConstants {
             1813,
             122189,
             null,
-            new Date(1577836800000L),
-            new Date(1609459200000L),
+            parseDateOrGetDefault("2020-01-01 00:00:00"),
+            parseDateOrGetDefault("2021-01-01 00:00:00"),
             null
     );
     public static final Book SENSE_AND_SENSIBILITY = new Book(
@@ -29,8 +33,8 @@ public class BookTestConstants {
             1811,
             122646,
             null,
-            new Date(1577836800000L),
-            new Date(1609459200000L),
+            parseDateOrGetDefault("2020-01-01 00:00:00"),
+            parseDateOrGetDefault("2021-01-01 00:00:00"),
             null
     );
     public static final BookDTO PRIDE_AND_PREJUDICE_DTO = new BookDTO(

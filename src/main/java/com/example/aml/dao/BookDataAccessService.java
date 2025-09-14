@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,8 +34,8 @@ public class BookDataAccessService implements BookDao {
                 rs.getInt("year_published"),
                 rs.getInt("word_count"),
                 (UUID) rs.getObject("picture_id"),
-                rs.getDate("created_at"),
-                rs.getDate("updated_at"),
+                new Date(rs.getTimestamp("created_at").getTime()),
+                new Date(rs.getTimestamp("updated_at").getTime()),
                 genreList
         );
     };

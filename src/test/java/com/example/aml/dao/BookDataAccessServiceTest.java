@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import static com.example.aml.testUtils.BookTestConstants.PRIDE_AND_PREJUDICE;
 import static com.example.aml.testUtils.BookTestConstants.SENSE_AND_SENSIBILITY;
+import static com.example.aml.testUtils.TestUtils.parseDateOrGetDefault;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** Unit tests for {@link BookDataAccessService} */
@@ -88,6 +89,7 @@ class BookDataAccessServiceTest {
 
     @Test
     void selectBooksTestNoFilters() {
+        parseDateOrGetDefault("2020-01-01 00:00:00");
         // give
         // when
         List<Book> bookThatShouldBePresent = bookDao.selectBooks(
